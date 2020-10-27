@@ -7,6 +7,7 @@
 #include "Blueprint/UserWidget.h"
 #include "DataStructures/StateKey.h"
 #include "Components/TextBlock.h"
+#include "Kismet/GameplayStatics.h"
 #include "UObject/ConstructorHelpers.h"
 
 ACuckooGameMode::ACuckooGameMode()
@@ -41,12 +42,19 @@ void ACuckooGameMode::BeginPlay()
 {
     GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White, TEXT("BeginPlay"));
 
+    APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+    if (PlayerController)
+    {
+        PlayerController->bShowMouseCursor = true;
+    }
+
     if (HUDObjClass)
     {
         GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White, TEXT("Create widget"));
         UUserWidget* Widget = CreateWidget<UUserWidget>(GetGameInstance(), HUDObjClass);
         Widget->AddToViewport();
-    } else
+    }
+    else
     {
         GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White, TEXT("Widget class not found"));
     }
