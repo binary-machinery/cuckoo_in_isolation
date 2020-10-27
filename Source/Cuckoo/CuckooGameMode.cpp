@@ -10,6 +10,12 @@
 #include "Kismet/GameplayStatics.h"
 #include "UObject/ConstructorHelpers.h"
 
+FActionWidget::FActionWidget(UButton* Button, UTextBlock* TextBlock)
+{
+    this->Button = Button;
+    this->TextBlock = TextBlock;
+}
+
 ACuckooGameMode::ACuckooGameMode()
 {
     static ConstructorHelpers::FClassFinder<UUserWidget> HUDWidgetObj(TEXT("/Game/UI/WBP_HUD"));
@@ -35,7 +41,7 @@ void ACuckooGameMode::InitGameState()
     State.Add(Cuckoo::EStateKey::HasTvWithOneChannel);
     State.Add(Cuckoo::EStateKey::HasBadInternet);
 
-    this->Actions = Cuckoo::FActionsCollection().Create();
+    Actions = Cuckoo::FActionsCollection().Create();
 }
 
 void ACuckooGameMode::BeginPlay()
@@ -48,19 +54,25 @@ void ACuckooGameMode::BeginPlay()
         PlayerController->bShowMouseCursor = true;
     }
 
-    if (HUDObjClass)
-    {
-        GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White, TEXT("Create widget"));
-        UUserWidget* Widget = CreateWidget<UUserWidget>(GetGameInstance(), HUDObjClass);
-        Widget->AddToViewport();
-    }
-    else
+    if (!HUDObjClass)
     {
         GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White, TEXT("Widget class not found"));
+        return;
+    }
+
+    GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White, TEXT("Create widget"));
+    UUserWidget* Widget = CreateWidget<UUserWidget>(GetGameInstance(), HUDObjClass);
+    Widget->AddToViewport();
+    GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White, TEXT("Widget created"));
+
+    for (int i = 0; i < ActionWidgets.Num(); ++i)
+    {
+        ActionWidgets[i].TextBlock->SetText(Actions[i]->GetMenuText());
     }
 }
 
-void ACuckooGameMode::SetUTextBlock(UTextBlock* TextBlock)
+void ACuckooGameMode::AddActionWidget(UButton* Button, UTextBlock* TextBlock)
 {
     GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White, TextBlock->GetText().ToString());
+    ActionWidgets.Add(FActionWidget(Button, TextBlock));
 }

@@ -8,7 +8,17 @@
 #include "GameFramework/GameModeBase.h"
 #include "CuckooGameMode.generated.h"
 
+class UButton;
 class UTextBlock;
+
+class FActionWidget
+{
+public:
+    FActionWidget(UButton* Button, UTextBlock* TextBlock);
+    
+    UButton* Button;
+    UTextBlock* TextBlock;
+};
 
 UCLASS(Blueprintable)
 class CUCKOO_API ACuckooGameMode : public AGameModeBase
@@ -23,10 +33,11 @@ public:
     virtual void BeginPlay() override;
 
     UFUNCTION(BlueprintCallable, Category="Test")
-    void SetUTextBlock(UTextBlock* TextBlock);
+    void AddActionWidget(UButton* Button, UTextBlock* TextBlock);
 
 private:
     UClass* HUDObjClass;
+    TArray<FActionWidget> ActionWidgets;
     TSet<Cuckoo::EStateKey> State;
     TArray<Cuckoo::FAction*> Actions;
 };
