@@ -40,4 +40,18 @@ private:
     TArray<FActionWidget> ActionWidgets;
     TSet<Cuckoo::EStateKey> State;
     TArray<Cuckoo::FAction*> Actions;
+    int CurrentDay;
+    TArray<Cuckoo::FAction*> CurrentActionOptions;
+
+    TArray<Cuckoo::FAction*> GetActionOptions() const;
+    void PickActionOption(int Index);
+
+    UFUNCTION()
+    void OnClickActionOption1Button();
+
+    UFUNCTION()
+    void OnClickActionOption2Button();
+
+    UFUNCTION()
+    void OnClickActionOption3Button();
 };
