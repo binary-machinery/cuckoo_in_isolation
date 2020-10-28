@@ -10,6 +10,7 @@ namespace Cuckoo
         HasStreamingSubscription,
         HasPremiumStreamingSubscription,
         HasFavoriteSeries,
+        FavoriteSeriesClosed,
         HasBadInternet,
         HasGoodInternet,
         HasGamingConsole,

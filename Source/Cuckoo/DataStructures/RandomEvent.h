@@ -5,40 +5,36 @@
 
 namespace Cuckoo
 {
-    class FAction
+    class FRandomEvent
     {
     public:
         const TArray<EStateKey>& GetPreconditions() const;
         const TArray<EStateKey>& GetStatesToRemove() const;
         const TArray<EStateKey>& GetStatesToAdd() const;
-        const FText& GetMenuText() const;
         const FText& GetResultText() const;
 
     private:
         TArray<EStateKey> Preconditions;
         TArray<EStateKey> StatesToRemove;
         TArray<EStateKey> StatesToAdd;
-        FText MenuText;
         FText ResultText;
 
-        friend class FActionBuilder;
+        friend class FRandomEventBuilder;
     };
 
-    class FActionBuilder
+    class FRandomEventBuilder
     {
     public:
-        FActionBuilder& CheckPrecondition(EStateKey Precondition);
-        FActionBuilder& RemoveState(EStateKey StateKey);
-        FActionBuilder& AddStates(EStateKey StateKey);
-        FActionBuilder& ShowMenuText(const FText& Value);
-        FActionBuilder& ShowResultText(const FText& ResultText);
-        FAction* Build();
+        FRandomEventBuilder& CheckPrecondition(EStateKey Precondition);
+        FRandomEventBuilder& RemoveState(EStateKey StateKey);
+        FRandomEventBuilder& AddState(EStateKey StateKey);
+        FRandomEventBuilder& ShowResultText(const FText& ResultText);
+        FRandomEvent* Build();
 
     private:
         TArray<EStateKey> Preconditions;
         TArray<EStateKey> StatesToRemove;
         TArray<EStateKey> StatesToAdd;
-        FText MenuText;
         FText ResultText;
     };
 }

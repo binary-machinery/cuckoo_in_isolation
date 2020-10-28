@@ -70,7 +70,11 @@ void ACuckooGameMode::BeginPlay()
     ActionWidgets[1].Button->OnClicked.AddDynamic(this, &ACuckooGameMode::OnClickActionOption2Button);
     ActionWidgets[2].Button->OnClicked.AddDynamic(this, &ACuckooGameMode::OnClickActionOption3Button);
 
-    CurrentDay = 1;
+    WellBeing = 50;
+    CurrentDay = 0;
+
+    UpdateWellBeing(0);
+    UpdateCurrentDay();
     UpdateCurrentActionOptions();
 }
 
@@ -82,6 +86,11 @@ void ACuckooGameMode::AddActionWidget(UButton* Button, UTextBlock* TextBlock)
 void ACuckooGameMode::SetDayTextWidget(UTextBlock* TextBlock)
 {
     DayTextWidget = TextBlock;
+}
+
+void ACuckooGameMode::SetWellBeingTextWidget(UTextBlock* TextBlock)
+{
+    WellBeingTextWidget = TextBlock;
 }
 
 void ACuckooGameMode::UpdateCurrentActionOptions()
@@ -128,6 +137,12 @@ void ACuckooGameMode::UpdateCurrentActionOptions()
     {
         ActionWidgets[i].TextBlock->SetText(FText::FromString(TEXT("-")));
     }
+}
+
+void ACuckooGameMode::UpdateWellBeing(int DeltaValue)
+{
+    WellBeing += DeltaValue;
+    WellBeingTextWidget->SetText(FText::FromString(FString::FromInt(WellBeing)));
 }
 
 void ACuckooGameMode::UpdateCurrentDay()

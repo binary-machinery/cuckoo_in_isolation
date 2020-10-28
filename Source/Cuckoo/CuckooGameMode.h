@@ -38,16 +38,22 @@ public:
     UFUNCTION(BlueprintCallable, Category="UI")
     void SetDayTextWidget(UTextBlock* TextBlock);
 
+    UFUNCTION(BlueprintCallable, Category="UI")
+    void SetWellBeingTextWidget(UTextBlock* TextBlock);
+
 private:
     UClass* HUDObjClass;
     TArray<FActionWidget> ActionWidgets;
     UTextBlock* DayTextWidget;
+    UTextBlock* WellBeingTextWidget;
     TSet<Cuckoo::EStateKey> State;
     TArray<Cuckoo::FAction*> Actions;
+    int WellBeing;
     int CurrentDay;
     TArray<Cuckoo::FAction*> CurrentActionOptions;
 
     void UpdateCurrentActionOptions();
+    void UpdateWellBeing(int DeltaValue);
     void UpdateCurrentDay();
     void PickActionOptionAndAdvanceTime(int Index);
 

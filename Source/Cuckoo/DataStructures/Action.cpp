@@ -1,58 +1,58 @@
 #include "Action.h"
 
 
-const TArray<Cuckoo::EStateKey>& Cuckoo::FAction::GetPreconditions()
+const TArray<Cuckoo::EStateKey>& Cuckoo::FAction::GetPreconditions() const
 {
     return Preconditions;
 }
 
-const TArray<Cuckoo::EStateKey>& Cuckoo::FAction::GetStatesToRemove()
+const TArray<Cuckoo::EStateKey>& Cuckoo::FAction::GetStatesToRemove() const
 {
     return StatesToRemove;
 }
 
-const TArray<Cuckoo::EStateKey>& Cuckoo::FAction::GetStatesToAdd()
+const TArray<Cuckoo::EStateKey>& Cuckoo::FAction::GetStatesToAdd() const
 {
     return StatesToAdd;
 }
 
-const FText& Cuckoo::FAction::GetMenuText()
+const FText& Cuckoo::FAction::GetMenuText() const
 {
     return MenuText;
 }
 
-const FText& Cuckoo::FAction::GetResultText()
+const FText& Cuckoo::FAction::GetResultText() const
 {
     return ResultText;
 }
 
 // Builder =====================================================================================
 
-Cuckoo::FActionBuilder& Cuckoo::FActionBuilder::AddPrecondition(EStateKey Precondition)
+Cuckoo::FActionBuilder& Cuckoo::FActionBuilder::CheckPrecondition(EStateKey Precondition)
 {
     Preconditions.Add(Precondition);
     return *this;
 }
 
-Cuckoo::FActionBuilder& Cuckoo::FActionBuilder::AddStatesToRemove(EStateKey StateKey)
+Cuckoo::FActionBuilder& Cuckoo::FActionBuilder::RemoveState(EStateKey StateKey)
 {
     StatesToRemove.Add(StateKey);
     return *this;
 }
 
-Cuckoo::FActionBuilder& Cuckoo::FActionBuilder::AddStatesToAdd(EStateKey StateKey)
+Cuckoo::FActionBuilder& Cuckoo::FActionBuilder::AddStates(EStateKey StateKey)
 {
     StatesToAdd.Add(StateKey);
     return *this;
 }
 
-Cuckoo::FActionBuilder& Cuckoo::FActionBuilder::SetMenuText(const FText& Value)
+Cuckoo::FActionBuilder& Cuckoo::FActionBuilder::ShowMenuText(const FText& Value)
 {
     this->MenuText = Value;
     return *this;
 }
 
-Cuckoo::FActionBuilder& Cuckoo::FActionBuilder::SetResultText(const FText& Value)
+Cuckoo::FActionBuilder& Cuckoo::FActionBuilder::ShowResultText(const FText& Value)
 {
     this->ResultText = Value;
     return *this;

@@ -6,46 +6,46 @@ TArray<Cuckoo::FAction*> Cuckoo::FActionsCollection::Create()
     TArray<FAction*> Actions;
 
     Actions.Add(
-        FActionBuilder().SetMenuText(FText::FromString(TEXT("Посмотреть телевизор")))
-                        .SetResultText(FText::FromString(TEXT("Посмотрел")))
-                        .AddPrecondition(EStateKey::HasTvWithOneChannel)
-                        .AddStatesToAdd(EStateKey::BelievesInPropaganda)
+        FActionBuilder().ShowMenuText(FText::FromString(TEXT("Посмотреть телевизор")))
+                        .ShowResultText(FText::FromString(TEXT("Посмотрел")))
+                        .CheckPrecondition(EStateKey::HasTvWithOneChannel)
+                        .AddStates(EStateKey::BelievesInPropaganda)
                         .Build()
     );
 
     Actions.Add(
-        FActionBuilder().SetMenuText(FText::FromString(TEXT("Посмотреть телевизор")))
-                        .SetResultText(FText::FromString(TEXT("Посмотрел")))
-                        .AddPrecondition(EStateKey::HasTvWithManyChannels)
+        FActionBuilder().ShowMenuText(FText::FromString(TEXT("Посмотреть телевизор")))
+                        .ShowResultText(FText::FromString(TEXT("Посмотрел")))
+                        .CheckPrecondition(EStateKey::HasTvWithManyChannels)
                         .Build()
     );
 
     Actions.Add(
-        FActionBuilder().SetMenuText(FText::FromString(TEXT("Подписаться на стриминговый сервис")))
-                        .SetResultText(FText::FromString(TEXT("Подписался")))
-                        .AddStatesToAdd(EStateKey::HasStreamingSubscription)
+        FActionBuilder().ShowMenuText(FText::FromString(TEXT("Подписаться на стриминговый сервис")))
+                        .ShowResultText(FText::FromString(TEXT("Подписался")))
+                        .AddStates(EStateKey::HasStreamingSubscription)
                         .Build()
     );
 
     Actions.Add(
-        FActionBuilder().SetMenuText(FText::FromString(TEXT("Посмотреть стриминговый сервис")))
-                        .SetResultText(FText::FromString(TEXT("Посмотрел")))
-                        .AddPrecondition(EStateKey::HasStreamingSubscription)
+        FActionBuilder().ShowMenuText(FText::FromString(TEXT("Посмотреть стриминговый сервис")))
+                        .ShowResultText(FText::FromString(TEXT("Посмотрел")))
+                        .CheckPrecondition(EStateKey::HasStreamingSubscription)
                         .Build()
     );
 
     Actions.Add(
-        FActionBuilder().SetMenuText(FText::FromString(TEXT("Взять премиумную подписку стриминговый сервис")))
-                        .SetResultText(FText::FromString(TEXT("Подписался на премиум")))
-                        .AddPrecondition(EStateKey::HasStreamingSubscription)
-                        .AddStatesToAdd(EStateKey::HasPremiumStreamingSubscription)
+        FActionBuilder().ShowMenuText(FText::FromString(TEXT("Взять премиумную подписку стриминговый сервис")))
+                        .ShowResultText(FText::FromString(TEXT("Подписался на премиум")))
+                        .CheckPrecondition(EStateKey::HasStreamingSubscription)
+                        .AddStates(EStateKey::HasPremiumStreamingSubscription)
                         .Build()
     );
 
     Actions.Add(
-        FActionBuilder().SetMenuText(FText::FromString(TEXT("Купить игровую консоль")))
-                        .SetResultText(FText::FromString(TEXT("Купил")))
-                        .AddStatesToAdd(EStateKey::HasGamingConsole)
+        FActionBuilder().ShowMenuText(FText::FromString(TEXT("Купить игровую консоль")))
+                        .ShowResultText(FText::FromString(TEXT("Купил")))
+                        .AddStates(EStateKey::HasGamingConsole)
                         .Build()
     );
 
