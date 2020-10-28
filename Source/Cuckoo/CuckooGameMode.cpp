@@ -70,23 +70,25 @@ void ACuckooGameMode::BeginPlay()
     ActionWidgets[1].Button->OnClicked.AddDynamic(this, &ACuckooGameMode::OnClickActionOption2Button);
     ActionWidgets[2].Button->OnClicked.AddDynamic(this, &ACuckooGameMode::OnClickActionOption3Button);
 
-    CurrentActionOptions = GetActionOptions();
-    for (int i = 0; i < CurrentActionOptions.Num(); ++i)
-    {
-        ActionWidgets[i].TextBlock->SetText(CurrentActionOptions[i]->GetMenuText());
-    }
+    CurrentDay = 1;
+    UpdateCurrentActionOptions();
 }
 
 void ACuckooGameMode::AddActionWidget(UButton* Button, UTextBlock* TextBlock)
 {
-    GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White, TextBlock->GetText().ToString());
     ActionWidgets.Add(FActionWidget(Button, TextBlock));
 }
 
-TArray<Cuckoo::FAction*> ACuckooGameMode::GetActionOptions() const
+void ACuckooGameMode::SetDayTextWidget(UTextBlock* TextBlock)
 {
+    DayTextWidget = TextBlock;
+}
+
+void ACuckooGameMode::UpdateCurrentActionOptions()
+{
+    GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White, TEXT("Update current action options"));
     TArray<Cuckoo::FAction*> FilteredActions;
-    for (auto Action : Actions)
+    for (Cuckoo::FAction* Action : Actions)
     {
         bool bAllPreconditionMatched = true;
         for (const Cuckoo::EStateKey Precondition : Action->GetPreconditions())
@@ -108,21 +110,41 @@ TArray<Cuckoo::FAction*> ACuckooGameMode::GetActionOptions() const
     {
         if (FilteredActions.Num() == 0)
         {
-            GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White, TEXT("Not enough options: " + i));
+            GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White,
+                                             TEXT("Not enough options: " + FString::FromInt(i)));
             break;
         }
         const int Index = FMath::RandRange(0, FilteredActions.Num() - 1);
         Result.Add(FilteredActions[Index]);
         FilteredActions.RemoveAt(Index);
     }
-    return MoveTemp(Result);
+
+    CurrentActionOptions = MoveTemp(Result);
+    for (int i = 0; i < CurrentActionOptions.Num(); ++i)
+    {
+        ActionWidgets[i].TextBlock->SetText(CurrentActionOptions[i]->GetMenuText());
+    }
+    for (int i = CurrentActionOptions.Num(); i < ActionWidgets.Num(); ++i)
+    {
+        ActionWidgets[i].TextBlock->SetText(FText::FromString(TEXT("-")));
+    }
 }
 
-void ACuckooGameMode::PickActionOption(int Index)
+void ACuckooGameMode::UpdateCurrentDay()
 {
-    GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White, TEXT("Pick action option: " + FString::FromInt(Index)));
+    GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White, TEXT("Update current day"));
+    ++CurrentDay;
+    DayTextWidget->SetText(FText::FromString(FString::FromInt(CurrentDay)));
+}
+
+void ACuckooGameMode::PickActionOptionAndAdvanceTime(int Index)
+{
+    GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White,
+                                     TEXT("Pick action option: " + FString::FromInt(Index)));
     if (Index >= CurrentActionOptions.Num())
     {
+        GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White,
+                                         TEXT("No such option: " + FString::FromInt(Index)));
         return;
     }
 
@@ -135,19 +157,23 @@ void ACuckooGameMode::PickActionOption(int Index)
     {
         State.Add(Key);
     }
+    Actions.Remove(Action);
+
+    UpdateCurrentActionOptions();
+    UpdateCurrentDay();
 }
 
 void ACuckooGameMode::OnClickActionOption1Button()
 {
-    PickActionOption(0);
+    PickActionOptionAndAdvanceTime(0);
 }
 
 void ACuckooGameMode::OnClickActionOption2Button()
 {
-    PickActionOption(1);
+    PickActionOptionAndAdvanceTime(1);
 }
 
 void ACuckooGameMode::OnClickActionOption3Button()
 {
-    PickActionOption(2);
+    PickActionOptionAndAdvanceTime(2);
 }

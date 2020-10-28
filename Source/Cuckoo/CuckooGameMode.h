@@ -15,7 +15,7 @@ class FActionWidget
 {
 public:
     FActionWidget(UButton* Button, UTextBlock* TextBlock);
-    
+
     UButton* Button;
     UTextBlock* TextBlock;
 };
@@ -32,19 +32,24 @@ public:
     virtual void InitGameState() override;
     virtual void BeginPlay() override;
 
-    UFUNCTION(BlueprintCallable, Category="Test")
+    UFUNCTION(BlueprintCallable, Category="UI")
     void AddActionWidget(UButton* Button, UTextBlock* TextBlock);
+
+    UFUNCTION(BlueprintCallable, Category="UI")
+    void SetDayTextWidget(UTextBlock* TextBlock);
 
 private:
     UClass* HUDObjClass;
     TArray<FActionWidget> ActionWidgets;
+    UTextBlock* DayTextWidget;
     TSet<Cuckoo::EStateKey> State;
     TArray<Cuckoo::FAction*> Actions;
     int CurrentDay;
     TArray<Cuckoo::FAction*> CurrentActionOptions;
 
-    TArray<Cuckoo::FAction*> GetActionOptions() const;
-    void PickActionOption(int Index);
+    void UpdateCurrentActionOptions();
+    void UpdateCurrentDay();
+    void PickActionOptionAndAdvanceTime(int Index);
 
     UFUNCTION()
     void OnClickActionOption1Button();
