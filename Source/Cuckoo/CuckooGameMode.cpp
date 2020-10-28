@@ -28,21 +28,15 @@ ACuckooGameMode::ACuckooGameMode()
     }
 }
 
-void ACuckooGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
-{
-    Super::InitGame(MapName, Options, ErrorMessage);
-    GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White,
-                                     TEXT("InitGame: " + MapName + ", " + Options + ", " + ErrorMessage));
-}
-
 void ACuckooGameMode::InitGameState()
 {
     Super::InitGameState();
-    GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White, TEXT("InitGameState"));
 
-    // Initial state
     State.Add(Cuckoo::EStateKey::HasTvWithOneChannel);
     State.Add(Cuckoo::EStateKey::HasBadInternet);
+
+    WellBeing = 50;
+    CurrentDay = 0;
 
     Actions = Cuckoo::FActionsCollection().Create();
     RandomEvents = Cuckoo::FRandomEventCollection().Create();
@@ -50,8 +44,6 @@ void ACuckooGameMode::InitGameState()
 
 void ACuckooGameMode::BeginPlay()
 {
-    GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White, TEXT("BeginPlay"));
-
     APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
     if (PlayerController)
     {
@@ -64,19 +56,14 @@ void ACuckooGameMode::BeginPlay()
         return;
     }
 
-    GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White, TEXT("Create widget"));
     UUserWidget* Widget = CreateWidget<UUserWidget>(GetGameInstance(), HUDObjClass);
     Widget->AddToViewport();
-    GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White, TEXT("Widget created"));
 
     ActionWidgets[0].Button->OnClicked.AddDynamic(this, &ACuckooGameMode::OnClickActionOption1Button);
     ActionWidgets[1].Button->OnClicked.AddDynamic(this, &ACuckooGameMode::OnClickActionOption2Button);
     ActionWidgets[2].Button->OnClicked.AddDynamic(this, &ACuckooGameMode::OnClickActionOption3Button);
 
     ResultContinueButton->OnClicked.AddDynamic(this, &ACuckooGameMode::OnClickResultContinueButton);
-
-    WellBeing = 50;
-    CurrentDay = 0;
 
     UpdateWellBeing(0);
     UpdateCurrentDay();
@@ -118,7 +105,6 @@ void ACuckooGameMode::UpdateCurrentActionOptions()
 {
     ResultTextPanel->SetVisibility(ESlateVisibility::Hidden);
 
-    GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White, TEXT("Update current action options"));
     TArray<Cuckoo::FAction*> FilteredActions;
     for (Cuckoo::FAction* Action : Actions)
     {
@@ -174,7 +160,6 @@ void ACuckooGameMode::UpdateWellBeing(int DeltaValue)
 
 void ACuckooGameMode::UpdateCurrentDay()
 {
-    GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White, TEXT("Update current day"));
     ++CurrentDay;
     DayTextWidget->SetText(FText::FromString(FString::FromInt(CurrentDay)));
 }
@@ -183,8 +168,6 @@ void ACuckooGameMode::PickActionOption(int Index)
 {
     ActionOptionsPanel->SetVisibility(ESlateVisibility::Hidden);
 
-    GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White,
-                                     TEXT("Pick action option: " + FString::FromInt(Index)));
     if (Index >= CurrentActionOptions.Num())
     {
         GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White,
@@ -234,7 +217,16 @@ void ACuckooGameMode::ShowRandomEvent()
     {
         const int Index = FMath::RandRange(0, FilteredRandomEvents.Num() - 1);
         Cuckoo::FRandomEvent* Event = FilteredRandomEvents[Index];
+        for (const Cuckoo::EStateKey Key : Event->GetStatesToRemove())
+        {
+            State.Remove(Key);
+        }
+        for (const Cuckoo::EStateKey Key : Event->GetStatesToAdd())
+        {
+            State.Add(Key);
+        }
         RandomEvents.Remove(Event);
+
         bShowRandomEvent = true;
         ResultTextWidget->SetText(Event->GetResultText());
         ResultTextPanel->SetVisibility(ESlateVisibility::Visible);

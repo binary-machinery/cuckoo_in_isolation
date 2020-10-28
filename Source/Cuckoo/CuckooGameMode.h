@@ -30,7 +30,6 @@ class CUCKOO_API ACuckooGameMode : public AGameModeBase
 public:
     ACuckooGameMode();
 
-    virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
     virtual void InitGameState() override;
     virtual void BeginPlay() override;
 

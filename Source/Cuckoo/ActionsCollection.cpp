@@ -31,6 +31,7 @@ TArray<Cuckoo::FAction*> Cuckoo::FActionsCollection::Create()
         FActionBuilder().ShowMenuText(FText::FromString(TEXT("Посмотреть стриминговый сервис")))
                         .ShowResultText(FText::FromString(TEXT("Посмотрел")))
                         .CheckPrecondition(EStateKey::HasStreamingSubscription)
+                        .AddStates(EStateKey::HasFavoriteSeries)
                         .Build()
     );
 
