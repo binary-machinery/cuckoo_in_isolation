@@ -30,7 +30,7 @@ TArray<Cuckoo::FAction*> Cuckoo::FActionsCollection::Create()
     Actions.Add(
         FActionBuilder().SetMenuText(FText::FromString(TEXT("Посмотреть стриминговый сервис")))
                         .SetResultText(FText::FromString(TEXT("Посмотрел")))
-                        .AddStatesToAdd(EStateKey::HasStreamingSubscription)
+                        .AddPrecondition(EStateKey::HasStreamingSubscription)
                         .Build()
     );
 
