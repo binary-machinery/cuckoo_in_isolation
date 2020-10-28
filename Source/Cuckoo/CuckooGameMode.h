@@ -8,6 +8,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "CuckooGameMode.generated.h"
 
+class UPanelWidget;
 class UButton;
 class UTextBlock;
 
@@ -33,6 +34,12 @@ public:
     virtual void BeginPlay() override;
 
     UFUNCTION(BlueprintCallable, Category="UI")
+    void SetActionOptionsPanel(UPanelWidget* Panel);
+
+    UFUNCTION(BlueprintCallable, Category="UI")
+    void SetResultTextPanel(UPanelWidget* Panel);
+
+    UFUNCTION(BlueprintCallable, Category="UI")
     void AddActionWidget(UButton* Button, UTextBlock* TextBlock);
 
     UFUNCTION(BlueprintCallable, Category="UI")
@@ -41,11 +48,18 @@ public:
     UFUNCTION(BlueprintCallable, Category="UI")
     void SetWellBeingTextWidget(UTextBlock* TextBlock);
 
+    UFUNCTION(BlueprintCallable, Category="UI")
+    void SetResultWidgets(UButton* ContinueButton, UTextBlock* ResultTextBlock);
+
 private:
     UClass* HUDObjClass;
+    UPanelWidget* ActionOptionsPanel;
+    UPanelWidget* ResultTextPanel;
     TArray<FActionWidget> ActionWidgets;
     UTextBlock* DayTextWidget;
     UTextBlock* WellBeingTextWidget;
+    UTextBlock* ResultTextWidget;
+    UButton* ResultContinueButton;
     TSet<Cuckoo::EStateKey> State;
     TArray<Cuckoo::FAction*> Actions;
     int WellBeing;
@@ -65,4 +79,7 @@ private:
 
     UFUNCTION()
     void OnClickActionOption3Button();
+
+    UFUNCTION()
+    void OnClickResultContinueButton();
 };

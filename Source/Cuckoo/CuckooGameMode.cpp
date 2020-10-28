@@ -70,12 +70,24 @@ void ACuckooGameMode::BeginPlay()
     ActionWidgets[1].Button->OnClicked.AddDynamic(this, &ACuckooGameMode::OnClickActionOption2Button);
     ActionWidgets[2].Button->OnClicked.AddDynamic(this, &ACuckooGameMode::OnClickActionOption3Button);
 
+    ResultContinueButton->OnClicked.AddDynamic(this, &ACuckooGameMode::OnClickResultContinueButton);
+
     WellBeing = 50;
     CurrentDay = 0;
 
     UpdateWellBeing(0);
     UpdateCurrentDay();
     UpdateCurrentActionOptions();
+}
+
+void ACuckooGameMode::SetActionOptionsPanel(UPanelWidget* Panel)
+{
+    ActionOptionsPanel = Panel;
+}
+
+void ACuckooGameMode::SetResultTextPanel(UPanelWidget* Panel)
+{
+    ResultTextPanel = Panel;
 }
 
 void ACuckooGameMode::AddActionWidget(UButton* Button, UTextBlock* TextBlock)
@@ -93,8 +105,16 @@ void ACuckooGameMode::SetWellBeingTextWidget(UTextBlock* TextBlock)
     WellBeingTextWidget = TextBlock;
 }
 
+void ACuckooGameMode::SetResultWidgets(UButton* ContinueButton, UTextBlock* ResultTextBlock)
+{
+    ResultContinueButton = ContinueButton;
+    ResultTextWidget = ResultTextBlock;
+}
+
 void ACuckooGameMode::UpdateCurrentActionOptions()
 {
+    ResultTextPanel->SetVisibility(ESlateVisibility::Hidden);
+    
     GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White, TEXT("Update current action options"));
     TArray<Cuckoo::FAction*> FilteredActions;
     for (Cuckoo::FAction* Action : Actions)
@@ -139,6 +159,8 @@ void ACuckooGameMode::UpdateCurrentActionOptions()
         ActionWidgets[i].TextBlock->SetText(FText::FromString(TEXT("-")));
         ActionWidgets[i].Button->SetVisibility(ESlateVisibility::Hidden);
     }
+
+    ActionOptionsPanel->SetVisibility(ESlateVisibility::Visible);
 }
 
 void ACuckooGameMode::UpdateWellBeing(int DeltaValue)
@@ -156,6 +178,8 @@ void ACuckooGameMode::UpdateCurrentDay()
 
 void ACuckooGameMode::PickActionOptionAndAdvanceTime(int Index)
 {
+    ActionOptionsPanel->SetVisibility(ESlateVisibility::Hidden);
+    
     GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White,
                                      TEXT("Pick action option: " + FString::FromInt(Index)));
     if (Index >= CurrentActionOptions.Num())
@@ -176,8 +200,8 @@ void ACuckooGameMode::PickActionOptionAndAdvanceTime(int Index)
     }
     Actions.Remove(Action);
 
-    UpdateCurrentActionOptions();
-    UpdateCurrentDay();
+    ResultTextWidget->SetText(Action->GetResultText());
+    ResultTextPanel->SetVisibility(ESlateVisibility::Visible);
 }
 
 void ACuckooGameMode::OnClickActionOption1Button()
@@ -193,4 +217,10 @@ void ACuckooGameMode::OnClickActionOption2Button()
 void ACuckooGameMode::OnClickActionOption3Button()
 {
     PickActionOptionAndAdvanceTime(2);
+}
+
+void ACuckooGameMode::OnClickResultContinueButton()
+{
+    UpdateCurrentDay();
+    UpdateCurrentActionOptions();
 }
