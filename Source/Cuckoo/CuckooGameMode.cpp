@@ -4,10 +4,12 @@
 #include "CuckooGameMode.h"
 
 #include "ActionsCollection.h"
+#include "RandomEventCollection.h"
 #include "Blueprint/UserWidget.h"
 #include "DataStructures/StateKey.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
+#include "DataStructures/RandomEvent.h"
 #include "Kismet/GameplayStatics.h"
 #include "UObject/ConstructorHelpers.h"
 
@@ -43,6 +45,7 @@ void ACuckooGameMode::InitGameState()
     State.Add(Cuckoo::EStateKey::HasBadInternet);
 
     Actions = Cuckoo::FActionsCollection().Create();
+    RandomEvents = Cuckoo::FRandomEventCollection().Create();
 }
 
 void ACuckooGameMode::BeginPlay()
@@ -114,7 +117,7 @@ void ACuckooGameMode::SetResultWidgets(UButton* ContinueButton, UTextBlock* Resu
 void ACuckooGameMode::UpdateCurrentActionOptions()
 {
     ResultTextPanel->SetVisibility(ESlateVisibility::Hidden);
-    
+
     GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White, TEXT("Update current action options"));
     TArray<Cuckoo::FAction*> FilteredActions;
     for (Cuckoo::FAction* Action : Actions)
@@ -176,10 +179,10 @@ void ACuckooGameMode::UpdateCurrentDay()
     DayTextWidget->SetText(FText::FromString(FString::FromInt(CurrentDay)));
 }
 
-void ACuckooGameMode::PickActionOptionAndAdvanceTime(int Index)
+void ACuckooGameMode::PickActionOption(int Index)
 {
     ActionOptionsPanel->SetVisibility(ESlateVisibility::Hidden);
-    
+
     GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White,
                                      TEXT("Pick action option: " + FString::FromInt(Index)));
     if (Index >= CurrentActionOptions.Num())
@@ -200,27 +203,74 @@ void ACuckooGameMode::PickActionOptionAndAdvanceTime(int Index)
     }
     Actions.Remove(Action);
 
+    bShowRandomEvent = false;
     ResultTextWidget->SetText(Action->GetResultText());
     ResultTextPanel->SetVisibility(ESlateVisibility::Visible);
 }
 
+void ACuckooGameMode::ShowRandomEvent()
+{
+    ActionOptionsPanel->SetVisibility(ESlateVisibility::Hidden);
+
+    TArray<Cuckoo::FRandomEvent*> FilteredRandomEvents;
+    for (Cuckoo::FRandomEvent* RandomEvent : RandomEvents)
+    {
+        bool bAllPreconditionMatched = true;
+        for (const Cuckoo::EStateKey Precondition : RandomEvent->GetPreconditions())
+        {
+            if (!State.Contains(Precondition))
+            {
+                bAllPreconditionMatched = false;
+                break;
+            }
+        }
+        if (bAllPreconditionMatched)
+        {
+            FilteredRandomEvents.Add(RandomEvent);
+        }
+    }
+
+    if (FilteredRandomEvents.Num() > 0)
+    {
+        const int Index = FMath::RandRange(0, FilteredRandomEvents.Num() - 1);
+        Cuckoo::FRandomEvent* Event = FilteredRandomEvents[Index];
+        RandomEvents.Remove(Event);
+        bShowRandomEvent = true;
+        ResultTextWidget->SetText(Event->GetResultText());
+        ResultTextPanel->SetVisibility(ESlateVisibility::Visible);
+    }
+    else
+    {
+        GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White,
+                                         TEXT("No events"));
+        UpdateCurrentActionOptions();
+    }
+}
+
 void ACuckooGameMode::OnClickActionOption1Button()
 {
-    PickActionOptionAndAdvanceTime(0);
+    PickActionOption(0);
 }
 
 void ACuckooGameMode::OnClickActionOption2Button()
 {
-    PickActionOptionAndAdvanceTime(1);
+    PickActionOption(1);
 }
 
 void ACuckooGameMode::OnClickActionOption3Button()
 {
-    PickActionOptionAndAdvanceTime(2);
+    PickActionOption(2);
 }
 
 void ACuckooGameMode::OnClickResultContinueButton()
 {
-    UpdateCurrentDay();
-    UpdateCurrentActionOptions();
+    if (bShowRandomEvent)
+    {
+        UpdateCurrentActionOptions();
+    }
+    else
+    {
+        UpdateCurrentDay();
+        ShowRandomEvent();
+    }
 }

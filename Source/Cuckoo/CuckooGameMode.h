@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "DataStructures/Action.h"
+#include "DataStructures/RandomEvent.h"
 #include "DataStructures/StateKey.h"
 #include "GameFramework/GameModeBase.h"
 #include "CuckooGameMode.generated.h"
@@ -62,14 +63,17 @@ private:
     UButton* ResultContinueButton;
     TSet<Cuckoo::EStateKey> State;
     TArray<Cuckoo::FAction*> Actions;
+    TArray<Cuckoo::FRandomEvent*> RandomEvents;
+    TArray<Cuckoo::FAction*> CurrentActionOptions;
     int WellBeing;
     int CurrentDay;
-    TArray<Cuckoo::FAction*> CurrentActionOptions;
+    bool bShowRandomEvent;
 
     void UpdateCurrentActionOptions();
     void UpdateWellBeing(int DeltaValue);
     void UpdateCurrentDay();
-    void PickActionOptionAndAdvanceTime(int Index);
+    void PickActionOption(int Index);
+    void ShowRandomEvent();
 
     UFUNCTION()
     void OnClickActionOption1Button();
