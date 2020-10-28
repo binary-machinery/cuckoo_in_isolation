@@ -131,11 +131,13 @@ void ACuckooGameMode::UpdateCurrentActionOptions()
     CurrentActionOptions = MoveTemp(Result);
     for (int i = 0; i < CurrentActionOptions.Num(); ++i)
     {
+        ActionWidgets[i].Button->SetVisibility(ESlateVisibility::Visible);
         ActionWidgets[i].TextBlock->SetText(CurrentActionOptions[i]->GetMenuText());
     }
     for (int i = CurrentActionOptions.Num(); i < ActionWidgets.Num(); ++i)
     {
         ActionWidgets[i].TextBlock->SetText(FText::FromString(TEXT("-")));
+        ActionWidgets[i].Button->SetVisibility(ESlateVisibility::Hidden);
     }
 }
 
