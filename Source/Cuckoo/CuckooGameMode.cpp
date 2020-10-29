@@ -67,7 +67,12 @@ void ACuckooGameMode::BeginPlay()
 
     UpdateWellBeing(0);
     UpdateCurrentDay();
-    UpdateCurrentActionOptions();
+    // UpdateCurrentActionOptions();
+
+    bShowActionResult = false;
+    ResultTextWidget->SetText(FText::FromString(TEXT("Это Кукуха")));
+    ResultTextPanel->SetVisibility(ESlateVisibility::Visible);
+    ActionOptionsPanel->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void ACuckooGameMode::SetActionOptionsPanel(UPanelWidget* Panel)
@@ -186,7 +191,7 @@ void ACuckooGameMode::PickActionOption(int Index)
     }
     Actions.Remove(Action);
 
-    bShowRandomEvent = false;
+    bShowActionResult = true;
     ResultTextWidget->SetText(Action->GetResultText());
     ResultTextPanel->SetVisibility(ESlateVisibility::Visible);
 }
@@ -227,7 +232,7 @@ void ACuckooGameMode::ShowRandomEvent()
         }
         RandomEvents.Remove(Event);
 
-        bShowRandomEvent = true;
+        bShowActionResult = false;
         ResultTextWidget->SetText(Event->GetResultText());
         ResultTextPanel->SetVisibility(ESlateVisibility::Visible);
     }
@@ -256,13 +261,13 @@ void ACuckooGameMode::OnClickActionOption3Button()
 
 void ACuckooGameMode::OnClickResultContinueButton()
 {
-    if (bShowRandomEvent)
-    {
-        UpdateCurrentActionOptions();
-    }
-    else
+    if (bShowActionResult)
     {
         UpdateCurrentDay();
         ShowRandomEvent();
+    }
+    else
+    {
+        UpdateCurrentActionOptions();
     }
 }

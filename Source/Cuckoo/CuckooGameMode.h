@@ -66,7 +66,7 @@ private:
     TArray<Cuckoo::FAction*> CurrentActionOptions;
     int WellBeing;
     int CurrentDay;
-    bool bShowRandomEvent;
+    bool bShowActionResult;
 
     void UpdateCurrentActionOptions();
     void UpdateWellBeing(int DeltaValue);
