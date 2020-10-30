@@ -69,6 +69,13 @@ private:
     bool bShowActionResult;
     bool bGameOver;
 
+    AActor* PetActor1;
+    AActor* PetActor2;
+    AActor* PetActor3;
+
+    void AddState(Cuckoo::EStateKey StateKey);
+    void RemoveState(Cuckoo::EStateKey StateKey);
+
     void UpdateCurrentActionOptions();
     void UpdateWellBeing(int DeltaValue);
     void UpdateCurrentDay();

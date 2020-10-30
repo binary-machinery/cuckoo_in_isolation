@@ -4,6 +4,7 @@
 #include "CuckooGameMode.h"
 
 #include "ActionsCollection.h"
+#include "EngineUtils.h"
 #include "RandomEventCollection.h"
 #include "Blueprint/UserWidget.h"
 #include "DataStructures/StateKey.h"
@@ -12,6 +13,7 @@
 #include "DataStructures/RandomEvent.h"
 #include "Kismet/GameplayStatics.h"
 #include "UObject/ConstructorHelpers.h"
+#include "GameFramework/Actor.h"
 
 FActionWidget::FActionWidget(UButton* Button, UTextBlock* TextBlock)
 {
@@ -65,6 +67,27 @@ void ACuckooGameMode::BeginPlay()
 
     ResultContinueButton->OnClicked.AddDynamic(this, &ACuckooGameMode::OnClickResultContinueButton);
 
+    TArray<AActor*> FoundActors;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActors);
+    for (AActor* Actor : FoundActors)
+    {
+        if (Actor->ActorHasTag("Pet1"))
+        {
+            PetActor1 = Actor;
+            PetActor1->SetActorHiddenInGame(true);
+        }
+        if (Actor->ActorHasTag("Pet2"))
+        {
+            PetActor2 = Actor;
+            PetActor2->SetActorHiddenInGame(true);
+        }
+        if (Actor->ActorHasTag("Pet3"))
+        {
+            PetActor3 = Actor;
+            PetActor3->SetActorHiddenInGame(true);
+        }
+    }
+
     UpdateWellBeing(0);
     UpdateCurrentDay();
 
@@ -104,6 +127,28 @@ void ACuckooGameMode::SetResultWidgets(UButton* ContinueButton, UTextBlock* Resu
 {
     ResultContinueButton = ContinueButton;
     ResultTextWidget = ResultTextBlock;
+}
+
+void ACuckooGameMode::AddState(Cuckoo::EStateKey StateKey)
+{
+    State.Add(StateKey);
+    if (StateKey == Cuckoo::EStateKey::HasPet)
+    {
+        PetActor1->SetActorHiddenInGame(false);
+    }
+    if (StateKey == Cuckoo::EStateKey::HasTwoPets)
+    {
+        PetActor2->SetActorHiddenInGame(false);
+    }
+    if (StateKey == Cuckoo::EStateKey::HasThreePets)
+    {
+        PetActor3->SetActorHiddenInGame(false);
+    }
+}
+
+void ACuckooGameMode::RemoveState(Cuckoo::EStateKey StateKey)
+{
+    State.Remove(StateKey);
 }
 
 void ACuckooGameMode::UpdateCurrentActionOptions()
@@ -227,11 +272,11 @@ void ACuckooGameMode::PickActionOption(int Index)
     Cuckoo::FAction* Action = CurrentActionOptions[Index];
     for (const Cuckoo::EStateKey Key : Action->GetStatesToRemove())
     {
-        State.Remove(Key);
+        RemoveState(Key);
     }
     for (const Cuckoo::EStateKey Key : Action->GetStatesToAdd())
     {
-        State.Add(Key);
+        AddState(Key);
     }
 
     UpdateWellBeing(Action->GetDeltaWellBeing());
@@ -285,11 +330,11 @@ void ACuckooGameMode::ShowRandomEvent()
         Cuckoo::FRandomEvent* Event = FilteredRandomEvents[Index];
         for (const Cuckoo::EStateKey Key : Event->GetStatesToRemove())
         {
-            State.Remove(Key);
+            RemoveState(Key);
         }
         for (const Cuckoo::EStateKey Key : Event->GetStatesToAdd())
         {
-            State.Add(Key);
+            AddState(Key);
         }
         UpdateWellBeing(Event->GetDeltaWellBeing());
 
