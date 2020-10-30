@@ -174,7 +174,7 @@ TArray<Cuckoo::FRandomEvent*> Cuckoo::FRandomEventCollection::Create()
 
     Events.Add(
         FRandomEventBuilder().ShowResultText(FText::FromString(TEXT(
-                                 "Выложила фото своих успехов в хобби. В комментариях напомнили, что у меня неправильная игровая консоль.")))
+                                 "Выложила фото своих успехов в плетении корзинок. В комментариях напомнили, что у меня неправильная игровая консоль.")))
                              .CheckPrecondition(EStateKey::HasHobby)
                              .CheckPrecondition(EStateKey::ConsoleWarrior)
                              .SetDeltaWellBeing(-5)

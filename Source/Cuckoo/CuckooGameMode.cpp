@@ -50,6 +50,7 @@ void ACuckooGameMode::BeginPlay()
     if (PlayerController)
     {
         PlayerController->bShowMouseCursor = true;
+        PlayerController->GetPawn()->SetActorHiddenInGame(true);
     }
 
     if (!HUDObjClass)
