@@ -13,6 +13,9 @@ namespace Cuckoo
         const TArray<EStateKey>& GetStatesToAdd() const;
         const FText& GetMenuText() const;
         const FText& GetResultText() const;
+        bool HasUnlimitedActivations() const;
+        float GetDeltaWellBeing() const;
+        float GetDiminishingReturnModifier() const;
 
     private:
         TArray<EStateKey> Preconditions;
@@ -20,6 +23,9 @@ namespace Cuckoo
         TArray<EStateKey> StatesToAdd;
         FText MenuText;
         FText ResultText;
+        bool bUnlimitedActivations;
+        float DeltaWellBeing;
+        float DiminishingReturnModifier = 1.0f;
 
         friend class FActionBuilder;
     };
@@ -27,18 +33,20 @@ namespace Cuckoo
     class FActionBuilder
     {
     public:
+        FActionBuilder();
+        ~FActionBuilder();
+
         FActionBuilder& CheckPrecondition(EStateKey Precondition);
         FActionBuilder& RemoveState(EStateKey StateKey);
         FActionBuilder& AddStates(EStateKey StateKey);
         FActionBuilder& ShowMenuText(const FText& Value);
         FActionBuilder& ShowResultText(const FText& ResultText);
+        FActionBuilder& HasUnlimitedActivations(bool Value);
+        FActionBuilder& SetDeltaWellBeing(float Value);
+        FActionBuilder& SetDiminishingReturnModifier(float Value);
         FAction* Build();
 
     private:
-        TArray<EStateKey> Preconditions;
-        TArray<EStateKey> StatesToRemove;
-        TArray<EStateKey> StatesToAdd;
-        FText MenuText;
-        FText ResultText;
+        FAction* Action;
     };
 }

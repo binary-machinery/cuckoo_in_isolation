@@ -26,45 +26,89 @@ const FText& Cuckoo::FAction::GetResultText() const
     return ResultText;
 }
 
+bool Cuckoo::FAction::HasUnlimitedActivations() const
+{
+    return bUnlimitedActivations;
+}
+
+float Cuckoo::FAction::GetDeltaWellBeing() const
+{
+    return DeltaWellBeing;
+}
+
+float Cuckoo::FAction::GetDiminishingReturnModifier() const
+{
+    return DiminishingReturnModifier;
+}
+
 // Builder =====================================================================================
+
+Cuckoo::FActionBuilder::FActionBuilder()
+{
+    Action = new FAction();
+}
+
+Cuckoo::FActionBuilder::~FActionBuilder()
+{
+    // Memory leak protection if Build() hasn't been called
+    if (Action)
+    {
+        delete Action;
+    }
+}
 
 Cuckoo::FActionBuilder& Cuckoo::FActionBuilder::CheckPrecondition(EStateKey Precondition)
 {
-    Preconditions.Add(Precondition);
+    Action->Preconditions.Add(Precondition);
     return *this;
 }
 
 Cuckoo::FActionBuilder& Cuckoo::FActionBuilder::RemoveState(EStateKey StateKey)
 {
-    StatesToRemove.Add(StateKey);
+    Action->StatesToRemove.Add(StateKey);
     return *this;
 }
 
 Cuckoo::FActionBuilder& Cuckoo::FActionBuilder::AddStates(EStateKey StateKey)
 {
-    StatesToAdd.Add(StateKey);
+    Action->StatesToAdd.Add(StateKey);
     return *this;
 }
 
-Cuckoo::FActionBuilder& Cuckoo::FActionBuilder::ShowMenuText(const FText& Value)
+Cuckoo::FActionBuilder& Cuckoo::FActionBuilder::ShowMenuText(const FText& MenuText)
 {
-    this->MenuText = Value;
+    Action->MenuText = MenuText;
     return *this;
 }
 
-Cuckoo::FActionBuilder& Cuckoo::FActionBuilder::ShowResultText(const FText& Value)
+Cuckoo::FActionBuilder& Cuckoo::FActionBuilder::ShowResultText(const FText& ResultText)
 {
-    this->ResultText = Value;
+    Action->ResultText = ResultText;
+    return *this;
+}
+
+Cuckoo::FActionBuilder& Cuckoo::FActionBuilder::HasUnlimitedActivations(bool Value)
+{
+    Action->bUnlimitedActivations = Value;
+    return *this;
+}
+
+
+Cuckoo::FActionBuilder& Cuckoo::FActionBuilder::SetDeltaWellBeing(float Value)
+{
+    Action->DeltaWellBeing = Value;
+    return *this;
+}
+
+Cuckoo::FActionBuilder& Cuckoo::FActionBuilder::SetDiminishingReturnModifier(float Value)
+{
+    Action->DiminishingReturnModifier = Value;
     return *this;
 }
 
 Cuckoo::FAction* Cuckoo::FActionBuilder::Build()
 {
-    FAction* Action = new FAction();
-    Action->Preconditions = MoveTemp(this->Preconditions);
-    Action->StatesToRemove = MoveTemp(this->StatesToRemove);
-    Action->StatesToAdd = MoveTemp(this->StatesToAdd);
-    Action->MenuText = MoveTemp(this->MenuText);
-    Action->ResultText = MoveTemp(this->ResultText);
-    return Action;
+    FAction* Result = Action;
+    Action = nullptr;
+    return Result;
 }

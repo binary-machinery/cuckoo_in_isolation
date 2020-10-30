@@ -20,36 +20,58 @@ const FText& Cuckoo::FRandomEvent::GetResultText() const
     return ResultText;
 }
 
+float Cuckoo::FRandomEvent::GetDeltaWellBeing() const
+{
+    return DeltaWellBeing;
+}
+
+Cuckoo::FRandomEventBuilder::FRandomEventBuilder()
+{
+    Event = new FRandomEvent();
+}
+
+Cuckoo::FRandomEventBuilder::~FRandomEventBuilder()
+{
+    // Memory leak protection if Build() hasn't been called
+    if (Event)
+    {
+        delete Event;
+    }
+}
+
 Cuckoo::FRandomEventBuilder& Cuckoo::FRandomEventBuilder::CheckPrecondition(EStateKey Precondition)
 {
-    this->Preconditions.Add(Precondition);
+    Event->Preconditions.Add(Precondition);
     return *this;
 }
 
 Cuckoo::FRandomEventBuilder& Cuckoo::FRandomEventBuilder::RemoveState(EStateKey StateKey)
 {
-    this->StatesToRemove.Add(StateKey);
+    Event->StatesToRemove.Add(StateKey);
     return *this;
 }
 
 Cuckoo::FRandomEventBuilder& Cuckoo::FRandomEventBuilder::AddState(EStateKey StateKey)
 {
-    this->StatesToAdd.Add(StateKey);
+    Event->StatesToAdd.Add(StateKey);
     return *this;
 }
 
 Cuckoo::FRandomEventBuilder& Cuckoo::FRandomEventBuilder::ShowResultText(const FText& Value)
 {
-    this->ResultText = Value;
+    Event->ResultText = Value;
+    return *this;
+}
+
+Cuckoo::FRandomEventBuilder& Cuckoo::FRandomEventBuilder::SetDeltaWellBeing(float Value)
+{
+    Event->DeltaWellBeing = Value;
     return *this;
 }
 
 Cuckoo::FRandomEvent* Cuckoo::FRandomEventBuilder::Build()
 {
-    FRandomEvent* Event = new FRandomEvent();
-    Event->Preconditions = MoveTemp(this->Preconditions);
-    Event->StatesToRemove = MoveTemp(this->StatesToRemove);
-    Event->StatesToAdd = MoveTemp(this->StatesToAdd);
-    Event->ResultText = MoveTemp(this->ResultText);
-    return Event;
+    FRandomEvent* Result = Event;
+    Event = nullptr;
+    return Result;
 }
