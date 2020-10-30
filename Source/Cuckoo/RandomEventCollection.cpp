@@ -84,7 +84,7 @@ TArray<Cuckoo::FRandomEvent*> Cuckoo::FRandomEventCollection::Create()
 
     Events.Add(
         FRandomEventBuilder().ShowResultText(FText::FromString(TEXT(
-                                 "Компьютер завис, не сохранив работу. Придется переделывать.")))
+                                 "Компьютер завис, не сохранив работу. Придётся переделывать.")))
                              .SetDeltaWellBeing(-5)
                              .Build()
     );
@@ -93,6 +93,7 @@ TArray<Cuckoo::FRandomEvent*> Cuckoo::FRandomEventCollection::Create()
         FRandomEventBuilder().ShowResultText(FText::FromString(TEXT(
                                  "Видео-совещание с коллегами при ужасной связи. Бесит!")))
                              .CheckPrecondition(EStateKey::HasBadInternet)
+                             .AddState(EStateKey::NeedsBetterInternet)
                              .SetDeltaWellBeing(-5)
                              .Build()
     );

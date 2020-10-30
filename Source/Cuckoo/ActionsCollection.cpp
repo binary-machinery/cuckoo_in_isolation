@@ -8,8 +8,9 @@ TArray<Cuckoo::FAction*> Cuckoo::FActionsCollection::Create()
     Actions.Add(
         FActionBuilder().ShowMenuText(FText::FromString(TEXT("Посмотреть телевизор")))
                         .ShowResultText(FText::FromString(TEXT(
-                            "По телевизору говорят что-то про политику и как все плохо. Жаль, что у меня всего один канал.")))
+                            "По телевизору говорят что-то про политику и как всё плохо. Жаль, что у меня всего один канал.")))
                         .CheckPrecondition(EStateKey::HasTvWithOneChannel)
+                        .AddStates(EStateKey::NeedsMoreTvChannels)
                         .AddStates(EStateKey::BelievesInPropaganda)
                         .HasUnlimitedActivations(true)
                         .SetDeltaWellBeing(5)
@@ -22,8 +23,10 @@ TArray<Cuckoo::FAction*> Cuckoo::FActionsCollection::Create()
                         .ShowResultText(FText::FromString(TEXT(
                             "Так уже лучше! Теперь можно смотреть что-то помимо новостей.")))
                         .CheckPrecondition(EStateKey::HasTvWithOneChannel)
+                        .CheckPrecondition(EStateKey::NeedsMoreTvChannels)
                         .RemoveState(EStateKey::HasTvWithOneChannel)
                         .RemoveState(EStateKey::BelievesInPropaganda)
+                        .RemoveState(EStateKey::NeedsMoreTvChannels)
                         .AddStates(EStateKey::HasTvWithManyChannels)
                         .SetDeltaWellBeing(8)
                         .Build()
@@ -44,15 +47,16 @@ TArray<Cuckoo::FAction*> Cuckoo::FActionsCollection::Create()
         FActionBuilder().ShowMenuText(FText::FromString(TEXT("Обновить тариф и взять интернет побыстрее")))
                         .ShowResultText(FText::FromString(TEXT(
                             "Ну теперь-то заживём! Теперь даже видео с котиками грузятся без задержек.")))
-                        .CheckPrecondition(EStateKey::HasBadInternet)
+                        .CheckPrecondition(EStateKey::NeedsBetterInternet)
                         .RemoveState(EStateKey::HasBadInternet)
+                        .RemoveState(EStateKey::NeedsBetterInternet)
                         .AddStates(EStateKey::HasGoodInternet)
                         .SetDeltaWellBeing(7)
                         .Build()
     );
 
     Actions.Add(
-        FActionBuilder().ShowMenuText(FText::FromString(TEXT("Подписаться на стриминговый сервис")))
+        FActionBuilder().ShowMenuText(FText::FromString(TEXT("Подписаться на стриминговый сервис с сериалами")))
                         .ShowResultText(FText::FromString(TEXT(
                             "Пора уже подписаться на Flexlix. Теперь-то уж точно есть время для всех тех сериалов, которые мне было некогда смотреть!")))
                         .AddStates(EStateKey::HasStreamingSubscription)
@@ -72,7 +76,7 @@ TArray<Cuckoo::FAction*> Cuckoo::FActionsCollection::Create()
     );
 
     Actions.Add(
-        FActionBuilder().ShowMenuText(FText::FromString(TEXT("Взять премиумную подписку на стриминговый сервис")))
+        FActionBuilder().ShowMenuText(FText::FromString(TEXT("Обновить подписку на стриминговый сервис до премиумной")))
                         .ShowResultText(FText::FromString(TEXT(
                             "Обновила подписку до Flexlix Superflex. Теперь можно смотреть сериалы в 8К!")))
                         .CheckPrecondition(EStateKey::HasStreamingSubscription)
@@ -120,6 +124,7 @@ TArray<Cuckoo::FAction*> Cuckoo::FActionsCollection::Create()
                             "Из-за лагов играть было почти невозможно. Видимо, нужен интернет побыстрее.")))
                         .CheckPrecondition(EStateKey::HasGamingConsole)
                         .CheckPrecondition(EStateKey::HasBadInternet)
+                        .AddStates(EStateKey::NeedsBetterInternet)
                         .SetDeltaWellBeing(3)
                         .Build()
     );
@@ -157,7 +162,7 @@ TArray<Cuckoo::FAction*> Cuckoo::FActionsCollection::Create()
     Actions.Add(
         FActionBuilder().ShowMenuText(FText::FromString(TEXT("Поучаствовать в конкурсе, связанном с хобби")))
                         .ShowResultText(FText::FromString(TEXT(
-                            "Я почти победила в конкурсе плетеных корзинок! А победитель точно накручивал голоса!")))
+                            "Я почти победила в конкурсе плетёных корзинок! А победитель точно накручивал голоса!")))
                         .CheckPrecondition(EStateKey::GoodAtHobby)
                         .SetDeltaWellBeing(10)
                         .Build()
@@ -204,7 +209,7 @@ TArray<Cuckoo::FAction*> Cuckoo::FActionsCollection::Create()
 
     Actions.Add(
         FActionBuilder().ShowMenuText(FText::FromString(TEXT("Написать в блог про свой любимый сериал")))
-                        .ShowResultText(FText::FromString(TEXT("Актеры супер, сюжет супер, концовка супер.")))
+                        .ShowResultText(FText::FromString(TEXT("Актеры супер, сюжет супер, концовка супер!")))
                         .CheckPrecondition(EStateKey::HasBlog)
                         .CheckPrecondition(EStateKey::HasFavoriteSeries)
                         .SetDeltaWellBeing(7)
@@ -222,7 +227,7 @@ TArray<Cuckoo::FAction*> Cuckoo::FActionsCollection::Create()
     );
 
     Actions.Add(
-        FActionBuilder().ShowMenuText(FText::FromString(TEXT("Написать в блог про свое хобби")))
+        FActionBuilder().ShowMenuText(FText::FromString(TEXT("Написать в блог про своё хобби")))
                         .ShowResultText(FText::FromString(TEXT(
                             "В комментариях мне написали, что я плету корзинки неправильно. Нет, это они делают неправильно!")))
                         .CheckPrecondition(EStateKey::HasBlog)
@@ -262,7 +267,7 @@ TArray<Cuckoo::FAction*> Cuckoo::FActionsCollection::Create()
 
     Actions.Add(
         FActionBuilder().ShowMenuText(FText::FromString(TEXT("Завести еще одно домашнее животное")))
-                        .ShowResultText(FText::FromString(TEXT("Теперь их двое и они могут играть друг с другом!")))
+                        .ShowResultText(FText::FromString(TEXT("Теперь их двое, и они могут играть друг с другом!")))
                         .CheckPrecondition(EStateKey::HasPet)
                         .AddStates(EStateKey::HasTwoPets)
                         .SetDeltaWellBeing(10)
@@ -270,16 +275,15 @@ TArray<Cuckoo::FAction*> Cuckoo::FActionsCollection::Create()
     );
 
     Actions.Add(
-        FActionBuilder().ShowMenuText(FText::FromString(TEXT("Завести еще одно домашнее животное")))
+        FActionBuilder().ShowMenuText(FText::FromString(TEXT("Завести ещё одно домашнее животное")))
                         .ShowResultText(FText::FromString(TEXT(
-                            "Теперь их трое - тройная милота! А та ваза мне все равно не нравилась.")))
+                            "Теперь их трое - тройная милота! А та ваза мне всё равно не нравилась.")))
                         .CheckPrecondition(EStateKey::HasTwoPets)
                         .RemoveState(EStateKey::HasTwoPets)
                         .AddStates(EStateKey::HasThreePets)
                         .SetDeltaWellBeing(10)
                         .Build()
     );
-
 
     return MoveTemp(Actions);
 }

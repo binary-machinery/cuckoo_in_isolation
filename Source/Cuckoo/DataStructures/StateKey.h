@@ -5,6 +5,7 @@ namespace Cuckoo
     enum class EStateKey
     {
         HasTvWithOneChannel,
+        NeedsMoreTvChannels,
         HasTvWithManyChannels,
         BelievesInPropaganda,
         HasStreamingSubscription,
@@ -12,6 +13,7 @@ namespace Cuckoo
         HasFavoriteSeries,
         FavoriteSeriesClosed,
         HasBadInternet,
+        NeedsBetterInternet,
         HasGoodInternet,
         HasGamingConsole,
         HasFavoriteGame,

@@ -69,7 +69,8 @@ void ACuckooGameMode::BeginPlay()
     UpdateCurrentDay();
 
     bShowActionResult = false;
-    ResultTextWidget->SetText(FText::FromString(TEXT("Это Кукуха")));
+    ResultTextWidget->SetText(FText::FromString(TEXT(
+        "Это Кукуха. В городе объявили самоизоляцию, поэтому ей теперь нужно сидеть дома. Помоги кукухе провести это время дома и не поехать куда-нибудь!")));
     ResultTextPanel->SetVisibility(ESlateVisibility::Visible);
     ActionOptionsPanel->SetVisibility(ESlateVisibility::Hidden);
 }
