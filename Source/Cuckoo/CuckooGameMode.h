@@ -67,11 +67,13 @@ private:
     int WellBeing;
     int CurrentDay;
     bool bShowActionResult;
+    bool bGameOver;
 
     void UpdateCurrentActionOptions();
     void UpdateWellBeing(int DeltaValue);
     void UpdateCurrentDay();
-    void AdvanceTime();
+    void NextTurn();
+    void EndGame(bool bWin);
     void PickActionOption(int Index);
     void ShowRandomEvent();
 

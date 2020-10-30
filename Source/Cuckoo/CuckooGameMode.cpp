@@ -153,6 +153,12 @@ void ACuckooGameMode::UpdateCurrentActionOptions()
         ActionWidgets[i].Button->SetVisibility(ESlateVisibility::Hidden);
     }
 
+    if (CurrentActionOptions.Num() == 0)
+    {
+        EndGame(true);
+        return;
+    }
+
     ActionOptionsPanel->SetVisibility(ESlateVisibility::Visible);
 }
 
@@ -168,10 +174,42 @@ void ACuckooGameMode::UpdateCurrentDay()
     DayTextWidget->SetText(FText::FromString(FString::FromInt(CurrentDay)));
 }
 
-void ACuckooGameMode::AdvanceTime()
+void ACuckooGameMode::NextTurn()
 {
     UpdateCurrentDay();
-    UpdateWellBeing(-5 * (1 + CurrentDay / 10));
+    UpdateWellBeing(-5 * (CurrentDay / 10));
+
+    if (CurrentDay >= 30)
+    {
+        EndGame(true);
+        return;
+    }
+
+    if (WellBeing > 0)
+    {
+        ShowRandomEvent();
+    }
+    else
+    {
+        EndGame(false);
+    }
+}
+
+void ACuckooGameMode::EndGame(bool bWin)
+{
+    if (bWin)
+    {
+        ResultTextWidget->
+            SetText(FText::FromString(TEXT("Кукухе удалось пережить самоизоляцию и сохранить рассудок!")));
+    }
+    else
+    {
+        ResultTextWidget->SetText(FText::FromString(TEXT(
+            "Кукуха больше не может терпеть эту самоизоляцию! Кукуха поехала! Она еще не решила, куда, но она больше не может здесь находиться!")));
+    }
+    bGameOver = true;
+    ActionOptionsPanel->SetVisibility(ESlateVisibility::Hidden);
+    ResultTextPanel->SetVisibility(ESlateVisibility::Visible);
 }
 
 void ACuckooGameMode::PickActionOption(int Index)
@@ -286,10 +324,16 @@ void ACuckooGameMode::OnClickActionOption3Button()
 
 void ACuckooGameMode::OnClickResultContinueButton()
 {
+    if (bGameOver)
+    {
+        UKismetSystemLibrary::QuitGame(GetWorld(), UGameplayStatics::GetPlayerController(GetWorld(), 0),
+                                       EQuitPreference::Quit, false);
+        return;
+    }
+
     if (bShowActionResult)
     {
-        AdvanceTime();
-        ShowRandomEvent();
+        NextTurn();
     }
     else
     {
