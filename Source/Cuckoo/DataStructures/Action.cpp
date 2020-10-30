@@ -36,9 +36,9 @@ float Cuckoo::FAction::GetDeltaWellBeing() const
     return DeltaWellBeing;
 }
 
-float Cuckoo::FAction::GetDiminishingReturnModifier() const
+void Cuckoo::FAction::ApplyDiminishingReturnModifier()
 {
-    return DiminishingReturnModifier;
+    DeltaWellBeing /= DiminishingReturnModifier;
 }
 
 // Builder =====================================================================================

@@ -67,7 +67,6 @@ void ACuckooGameMode::BeginPlay()
 
     UpdateWellBeing(0);
     UpdateCurrentDay();
-    // UpdateCurrentActionOptions();
 
     bShowActionResult = false;
     ResultTextWidget->SetText(FText::FromString(TEXT("Это Кукуха")));
@@ -169,6 +168,12 @@ void ACuckooGameMode::UpdateCurrentDay()
     DayTextWidget->SetText(FText::FromString(FString::FromInt(CurrentDay)));
 }
 
+void ACuckooGameMode::AdvanceTime()
+{
+    UpdateCurrentDay();
+    UpdateWellBeing(-5 * (1 + CurrentDay / 10));
+}
+
 void ACuckooGameMode::PickActionOption(int Index)
 {
     ActionOptionsPanel->SetVisibility(ESlateVisibility::Hidden);
@@ -189,11 +194,28 @@ void ACuckooGameMode::PickActionOption(int Index)
     {
         State.Add(Key);
     }
-    Actions.Remove(Action);
 
+    UpdateWellBeing(Action->GetDeltaWellBeing());
     bShowActionResult = true;
     ResultTextWidget->SetText(Action->GetResultText());
     ResultTextPanel->SetVisibility(ESlateVisibility::Visible);
+
+    if (Action->HasUnlimitedActivations())
+    {
+        Action->ApplyDiminishingReturnModifier();
+        if (Action->GetDeltaWellBeing() < 1.0f)
+        {
+            Actions.Remove(Action);
+            delete Action;
+        }
+    }
+    else
+    {
+        Actions.Remove(Action);
+        GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5, FColor::White,
+                                         TEXT("Deleted: " + Action->GetMenuText().ToString()));
+        delete Action;
+    }
 }
 
 void ACuckooGameMode::ShowRandomEvent()
@@ -230,11 +252,14 @@ void ACuckooGameMode::ShowRandomEvent()
         {
             State.Add(Key);
         }
-        RandomEvents.Remove(Event);
+        UpdateWellBeing(Event->GetDeltaWellBeing());
 
         bShowActionResult = false;
         ResultTextWidget->SetText(Event->GetResultText());
         ResultTextPanel->SetVisibility(ESlateVisibility::Visible);
+
+        RandomEvents.Remove(Event);
+        delete Event;
     }
     else
     {
@@ -263,7 +288,7 @@ void ACuckooGameMode::OnClickResultContinueButton()
 {
     if (bShowActionResult)
     {
-        UpdateCurrentDay();
+        AdvanceTime();
         ShowRandomEvent();
     }
     else

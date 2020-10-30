@@ -14,12 +14,13 @@ namespace Cuckoo
         HasBadInternet,
         HasGoodInternet,
         HasGamingConsole,
-        PlayingSinglePlayerGames,
-        PlayingMultiPlayerGames,
+        HasFavoriteGame,
+        ConsoleWarrior,
         HasPet,
         HasTwoPets,
         HasThreePets,
         HasHobby,
+        GoodAtHobby,
         HasBlog,
     };
 }

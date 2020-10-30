@@ -71,6 +71,7 @@ private:
     void UpdateCurrentActionOptions();
     void UpdateWellBeing(int DeltaValue);
     void UpdateCurrentDay();
+    void AdvanceTime();
     void PickActionOption(int Index);
     void ShowRandomEvent();
 

@@ -15,7 +15,7 @@ namespace Cuckoo
         const FText& GetResultText() const;
         bool HasUnlimitedActivations() const;
         float GetDeltaWellBeing() const;
-        float GetDiminishingReturnModifier() const;
+        void ApplyDiminishingReturnModifier();
 
     private:
         TArray<EStateKey> Preconditions;
