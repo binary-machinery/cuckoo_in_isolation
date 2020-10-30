@@ -174,14 +174,6 @@ TArray<Cuckoo::FRandomEvent*> Cuckoo::FRandomEventCollection::Create()
 
     Events.Add(
         FRandomEventBuilder().ShowResultText(FText::FromString(TEXT(
-                                 "Кто-то отписался от блога.")))
-                             .CheckPrecondition(EStateKey::HasBlog)
-                             .SetDeltaWellBeing(-5)
-                             .Build()
-    );
-
-    Events.Add(
-        FRandomEventBuilder().ShowResultText(FText::FromString(TEXT(
                                  "Выложила фото своих успехов в хобби. В комментариях напомнили, что у меня неправильная игровая консоль.")))
                              .CheckPrecondition(EStateKey::HasHobby)
                              .CheckPrecondition(EStateKey::ConsoleWarrior)
