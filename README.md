@@ -1,5 +1,4 @@
 # Cuckoo in Isolation
-A game for a game jam (Unreal Engine 4)
 
 `Cuckoo in Isolation` is a small text game made for a game jam. In the game, a bird with the name Cuckoo must survive in self-isolation. Each game day, a player makes decisions, what Cuckoo will do to maintain her well-being and mental health. E.g., she can start a blog, start a hobby, subscribe to Flexlix, get a pet, or buy a gaming console and participate in holy wars about the best gaming console on the internet. Each turn, something bad happens that can affect Cuckoo's well-being. If a player can survive 30 days, it's a win. If well-being is 0, the game ends.
 
